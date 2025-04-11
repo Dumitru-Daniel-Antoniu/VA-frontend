@@ -33,7 +33,7 @@ export default function Home() {
 
   // Handle errors
   const handleError = () => {
-    setMessages((prevMessages) => [...prevMessages, { "message": "Oops! There seems to be an error. Please try again.", "type": "apiMessage" }]);
+    setMessages((prevMessages) => [...prevMessages, { "message": "Oops! There seems to be an error. Please try again.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "type": "apiMessage" }]);
     setLoading(false);
     setUserInput("");
   }
@@ -102,7 +102,7 @@ export default function Home() {
       </Head>
       <div className={styles.topnav}>
       <div className = {styles.navlogo}>
-    <a href="/">LangChain</a>
+    <a href="/">FiiHelp</a>
     </div>
     <div className = {styles.navlinks}>
     </div>
@@ -128,7 +128,7 @@ export default function Home() {
            <div className={styles.center}>
             
             <div className = {styles.cloudform}>
-           <form onSubmit = {handleSubmit}>
+           <form onSubmit = {handleSubmit} className = {styles.inputArea}>
           <textarea 
           disabled = {loading}
           onKeyDown={handleEnter}
@@ -156,9 +156,6 @@ export default function Home() {
           </svg>}
             </button>
             </form>
-            </div>
-            <div className = {styles.footer}>
-            <p>Powered by <a href = "https://github.com/hwchase17/langchain" target="_blank">LangChain</a>. Built by <a href="https://twitter.com/chillzaza_" target="_blank">Zahid</a>.</p>
             </div>
         </div>
       </main>
