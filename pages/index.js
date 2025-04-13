@@ -22,7 +22,6 @@ export default function Home() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordTime, setRecordTime] = useState(0);
 
-
     // Auto scroll chat to bottom
   useEffect(() => {
     const messageList = messageListRef.current;
