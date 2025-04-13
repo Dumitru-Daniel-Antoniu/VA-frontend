@@ -17,20 +17,16 @@
 }
 
 .topnav {
-  background-color: #141619;
-  border-bottom: 1px solid #30373d;
   display: flex;
   justify-content: space-between;
-  padding: 1rem 0.75rem 1rem 0.75rem;
   align-items: center;
+  padding: 1rem;
 }
 
-.navlogo, .navlinks a {
-  font-weight: 500;
-}
 
 .navlogo {
   font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .navlinks {
@@ -58,23 +54,26 @@
 
 .cloudform {
   position: relative;
-  /* position: fixed;
-  bottom: 0;
-  left: 0;
+}
+
+.inputArea {
+  width: 75vw;
+  margin: 0 auto;
+}
+
+.inputWrap {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  background-color: #111;
-  padding: 1rem;
-  border-top: 1px solid #333;
-  z-index: 10; */
 }
 
 .textarea {
-  position: relative;
+  width: 100%;
+  min-width: 0;
   resize: none;
   font-size: 1.1rem;
-  /* padding: 1rem 2rem 1rem 2rem; */
-  width: 75vw;
-  /* width: 100%; */
   overflow: hidden;
   padding: 1rem;
   border-radius: 0.5rem;
@@ -93,15 +92,44 @@
   color: #5f6368;
 }
 
+.recordButton {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background-color: #ef4444;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 40px;
+}
+
 .generatebutton {
-  position: absolute;
-  top: 0.87rem;
-  right: 1rem;
   color: rgb(165, 162, 162);
-  background: none;
-  padding: 0.3rem;
+  background: #2a2b2d;
+  padding: 0.5rem 1rem;
   border: none;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-left: 8px;
+}
+
+.generatebutton:hover {
+  background: #1f2227;
+}
+
+.generatebutton:disabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+  background: none;
 }
 
 .loadingwheel {
@@ -117,17 +145,6 @@
   fill: currentColor;
 }
 
-.generatebutton:hover {
-  background: #1f2227;
-  border-radius: 0.2rem;
-}
-
-.generatebutton:disabled {
-  opacity: 0.9;
-  cursor: not-allowed;
-  background: none;
-}
-
 .messagelistloading {
   display: flex;
   width: 100%;
@@ -141,7 +158,7 @@
   color: #ECECF1;
 }
 
-.usermessagewaiting{
+.usermessagewaiting {
   padding: 1.5rem;
   color: #ECECF1;
   background: linear-gradient(to left, #070809, #1a1c20, #070809);
@@ -181,13 +198,13 @@
   line-height: 1.75;
 }
 
-.markdownanswer a:hover {
-  opacity: 0.8;
-}
-
 .markdownanswer a {
   color: #16bed7;
   font-weight: 500;
+}
+
+.markdownanswer a:hover {
+  opacity: 0.8;
 }
 
 .markdownanswer code {
@@ -196,19 +213,22 @@
   white-space: pre-wrap !important;
 }
 
-.markdownanswer ol, .markdownanswer ul {
+.markdownanswer ol,
+.markdownanswer ul {
   margin: 1rem;
 }
 
-.boticon, .usericon {
-  margin-right: 1rem;
-  border-radius: 0.1rem;
-}
-
-.markdownanswer h1, .markdownanswer h2, .markdownanswer h3 {
+.markdownanswer h1,
+.markdownanswer h2,
+.markdownanswer h3 {
   font-size: inherit;
 }
 
+.boticon,
+.usericon {
+  margin-right: 1rem;
+  border-radius: 0.1rem;
+}
 
 .center {
   display: flex;
@@ -221,18 +241,14 @@
 
 .cloud {
   width: 75vw;
-  height: 65vh; 
+  height: 65vh;
   background: #070809;
-  background: none;
   box-shadow: none;
   padding: 0;
-  /* border-radius: 0.5rem;
-  border: 1px solid #30373d; */
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  flex-grow: 1;
   justify-content: center;
   align-items: center;
 }
@@ -252,6 +268,7 @@
   color: #5f6368;
   font-size: 0.8rem;
   margin: 1.5rem;
+  text-align: center;
 }
 
 .footer a {
@@ -267,7 +284,6 @@
   display: flex;
   margin-bottom: 12px;
   max-width: 70%;
-  /* display: inline-flex; */
 }
 
 .userBubble {
@@ -292,21 +308,18 @@
 .messagelist {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
-  margin-bottom: 30px;
+  padding: 10px;
+  margin-bottom: 1rem;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 50px;
-  padding: 10px;
   border-radius: 0.5rem;
-  margin-bottom: 1rem;
 }
 
-/* Mobile optimization */
+/* Mobile Optimization */
 @media (max-width: 600px) {
-
   .main {
     padding: 1rem;
     max-height: 90vh;
@@ -316,27 +329,29 @@
     width: 22rem;
     height: 28rem;
   }
-  .textarea {
-    width: 22rem;
+
+  .inputArea {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
   }
+
   .topnav {
     border: 1px solid black;
     align-items: center;
-    padding: 0.85rem 0.75rem 0.85rem 0.75rem;
+    padding: 0.85rem 0.75rem;
   }
 
-.navlogo {
-  font-size: 1.25rem;
-  width: 20rem;
-}
+  .navlogo {
+    font-size: 1.25rem;
+    width: 20rem;
+  }
 
-.markdownanswer code {
-  white-space : pre-wrap !important;
-}
+  .footer {
+    font-size: 0.7rem;
+  }
 
-.footer {
-  font-size: 0.7rem;
-  width: 100%;
-  text-align: center;
-}
+  .markdownanswer code {
+    white-space: pre-wrap !important;
+  }
 }
