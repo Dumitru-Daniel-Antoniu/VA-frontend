@@ -192,7 +192,6 @@ export default function Home() {
         ref={textAreaRef}
         rows={1}
         onInput={handleInput}
-        maxLength={512}
         type="text"
         id="userInput"
         name="userInput"
