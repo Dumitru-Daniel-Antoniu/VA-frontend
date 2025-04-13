@@ -6,107 +6,111 @@ import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Home() {
+    const [userInput, setUserInput] = useState("");
+    const [history, setHistory] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [messages, setMessages] = useState([
+        {
+            "message": "Hi there! How can I help?",
+            "type": "apiMessage"
+        }
+    ]);
 
-  const [userInput, setUserInput] = useState("");
-  const [history, setHistory] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      "message": "Hi there! How can I help?",
-      "type": "apiMessage"
-    }
-  ]);
-
-  const messageListRef = useRef(null);
-  const textAreaRef = useRef(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordTime, setRecordTime] = useState(0);
-
-    // Auto scroll chat to bottom
-  useEffect(() => {
-    const messageList = messageListRef.current;
-    messageList.scrollTop = messageList.scrollHeight;
-  }, [messages]);
-
-  // Focus on text field on load
-  useEffect(() => {
-    textAreaRef.current.focus();
-  }, [messages]);
-
-  const handleInput = () => {
-    const el = textAreaRef.current;
-    if(el) {
-      el.style.height = "auto";
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  };
-
-  useEffect(() => {
-    handleInput();
-  }, []);
-
-  // Handle errors
-  const handleError = () => {
-    setMessages((prevMessages) => [...prevMessages, { "message": "Oops! There seems to be an error. Please try again.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "type": "apiMessage" }]);
-    setLoading(false);
-    setUserInput("");
-  }
-
-  // Handle form submission
-  const handleSubmit = async(e) => {
-    e.preventDefault();
-
-    if (userInput.trim() === "") {
-      return;
-    }
-
-    setLoading(true);
-    setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
-
-    // Send user question and history to API
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ question: userInput, history: history }),
+    const messageListRef = useRef(null);
+    const textAreaRef = useRef(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordTime, setRecordTime] = useState(0);
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('theme') === 'dark';
+        }
+        return true;
     });
 
-    if (!response.ok) {
-      handleError();
-      return;
-  }
+    useEffect(() => {
+        const messageList = messageListRef.current;
+        messageList.scrollTop = messageList.scrollHeight;
+    }, [messages]);
 
-    // Reset user input
-    setUserInput("");
-    const data = await response.json();
+    useEffect(() => {
+        textAreaRef.current.focus();
+    }, [messages]);
 
-    if (data.result.error === "Unauthorized") {
-      handleError();
-      return;
+    const handleInput = () => {
+        const el = textAreaRef.current;
+        if (el) {
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+        }
+    };
+
+    useEffect(() => {
+        handleInput();
+    }, []);
+
+    const handleError = () => {
+        setMessages((prevMessages) => [...prevMessages, {
+            "message": "Oops! There seems to be an error. Please try again.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "type": "apiMessage"
+        }]);
+        setLoading(false);
+        setUserInput("");
+        const el = textAreaRef.current;
+        if (el) {
+            el.style.height = "auto";
+            el.rows = 1;
+        }
     }
 
-    setMessages((prevMessages) => [...prevMessages, { "message": data.result.success, "type": "apiMessage" }]);
-    setLoading(false);
-    
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  // Prevent blank submissions and allow for multiline input
-  const handleEnter = (e) => {
-    if (e.key === "Enter" && userInput) {
-      if(!e.shiftKey && userInput) {
-        handleSubmit(e);
-      }
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
+        if (userInput.trim() === "") {
+            return;
+        }
 
-  // Keep history in sync with messages
-  useEffect(() => {
-    if (messages.length >= 3) {
-      setHistory([[messages[messages.length - 2].message, messages[messages.length - 1].message]]);
-    }
+        setLoading(true);
+        setMessages((prevMessages) => [...prevMessages, { "message": userInput, "type": "userMessage" }]);
+
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ question: userInput, history: history }),
+        });
+
+        if (!response.ok) {
+            handleError();
+            return;
+        }
+
+        setUserInput("");
+        const data = await response.json();
+
+        if (data.result.error === "Unauthorized") {
+            handleError();
+            return;
+        }
+
+        setMessages((prevMessages) => [...prevMessages, { "message": data.result.success, "type": "apiMessage" }]);
+        setLoading(false);
+    };
+
+    const handleEnter = (e) => {
+        if (e.key === "Enter" && userInput) {
+            if (!e.shiftKey && userInput) {
+                handleSubmit(e);
+            }
+        } else if (e.key === "Enter") {
+            e.preventDefault();
+        }
+    };
+
+    useEffect(() => {
+        if (messages.length >= 3) {
+            setHistory([[messages[messages.length - 2].message, messages[messages.length - 1].message]]);
+        }
     }, [messages])
 
     let mediaRecorderRef = useRef(null);
@@ -114,7 +118,6 @@ export default function Home() {
 
     const handleRecord = async () => {
         if (isRecording) {
-            // Stop recording
             mediaRecorderRef.current?.stop();
             clearInterval(recordInterval.current);
             setIsRecording(false);
@@ -136,10 +139,8 @@ export default function Home() {
             mediaRecorder.addEventListener("stop", () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 console.log("Audio recording complete:", audioBlob);
-                // You could send audioBlob to an API or store locally
             });
 
-            // Start timer
             setIsRecording(true);
             setRecordTime(0);
             recordInterval.current = setInterval(() => {
@@ -151,93 +152,129 @@ export default function Home() {
             setIsRecording(false);
         }
     };
+
     return (
-    <>
-      <Head>
-        <title>FiiHelp</title>
-      </Head>
-      <div className={styles.topnav}>
-      <div className = {styles.navlogo}>
-    <a href="/">FiiHelp</a>
-    </div>
-    <div className = {styles.navlinks}>
-    </div>
-</div>
-      <main className={styles.main}>
-      <div className = {styles.cloud}>
-        <div ref={messageListRef} className = {styles.messagelist}>
-        {messages.map((message, index) => {
-          return (
-            // The latest message sent by the user will be animated while waiting for a response
-            <div
-            key={index}
-            className={`${message.type === "apiMessage" ? styles.botText : styles.userBubble}`}>
-              <div className = {styles.markdownanswer}>
-                {/* Messages are being rendered in Markdown format */}
-                <ReactMarkdown linkTarget = {"_blank"}>{message.message}</ReactMarkdown>
+        <>
+            <Head>
+                <title>FiiHelp</title>
+            </Head>
+
+            <div className={isDarkMode ? styles.dark : styles.light}>
+                <div className={styles.topnav}>
+                    <div className={styles.navlogo}>
+                        <a href="/">FiiHelp</a>
+                    </div>
+                    <div className={styles.navlinks}>
+                        <label className={styles["theme-toggle"]}>
+                            <input
+                                type="checkbox"
+                                checked={!isDarkMode}
+                                onChange={() => {
+                                    setIsDarkMode((prev) => {
+                                        const newTheme = !prev;
+                                        localStorage.setItem("theme", newTheme ? "dark" : "light");
+                                        return newTheme;
+                                    });
+                                }}
+                            />
+                            <span className={styles.slider}>
+      <span className={`${styles.icon} ${styles.sun}`}>☀️</span>
+      <span className={`${styles.icon} ${styles.moon}`}>🌙</span>
+    </span>
+                        </label>
+                    </div>
+
                 </div>
-              </div>
-          )
-        })}
-        </div>
+
+                <main className={styles.main}>
+                    <div className={styles.cloud}>
+                        <div ref={messageListRef} className={styles.messagelist}>
+                            {messages.map((message, index) => (
+                                <div
+                                    key={index}
+                                    className={
+                                        message.type === "apiMessage"
+                                            ? styles.botText
+                                            : styles.userBubble
+                                    }
+                                >
+                                    <div className={styles.markdownanswer}>
+                                        <ReactMarkdown linkTarget="_blank">
+                                            {message.message}
+                                        </ReactMarkdown>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className={styles.center}>
+                        <div className={styles.cloudform}>
+                            <form onSubmit={handleSubmit} className={styles.inputArea}>
+                                <div className={styles.inputWrap}>
+                                    <textarea
+                                        disabled={loading}
+                                        onKeyDown={handleEnter}
+                                        ref={textAreaRef}
+                                        rows={1}
+                                        onInput={handleInput}
+                                        type="text"
+                                        id="userInput"
+                                        name="userInput"
+                                        placeholder={
+                                            loading ? "Waiting for response..." : "Type your question..."
+                                        }
+                                        value={userInput}
+                                        onChange={(e) => setUserInput(e.target.value)}
+                                        className={styles.textarea}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={handleRecord}
+                                        className={styles.recordButton}
+                                    >
+                                        {isRecording ? "⏹ Stop" : "🎤 Record"}
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className={styles.generatebutton}
+                                    >
+                                        {loading ? (
+                                            <div className={styles.loadingwheel}>
+                                                <CircularProgress color="inherit" size={20} />
+                                            </div>
+                                        ) : (
+                                            <svg
+                                                viewBox="0 0 20 20"
+                                                className={styles.svgicon}
+                                                xmlns="http://www.w3.org/2000/svg"
+                                            >
+                                                <path
+                                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                                            </svg>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+
+                            {isRecording && (
+                                <div style={{
+                                    marginTop: "8px",
+                                    color: "#ef4444",
+                                    fontWeight: "500",
+                                    textAlign: "right",
+                                }}>
+                                    ⏱️ Recording: {recordTime}s
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </main>
             </div>
-           <div className={styles.center}>
-
-               <div className={styles.cloudform}>
-                   <form onSubmit={handleSubmit} className={styles.inputArea}>
-                       <div className={styles.inputWrap}>
-    <textarea
-        disabled={loading}
-        onKeyDown={handleEnter}
-        ref={textAreaRef}
-        rows={1}
-        onInput={handleInput}
-        type="text"
-        id="userInput"
-        name="userInput"
-        placeholder={loading ? "Waiting for response..." : "Type your question..."}
-        value={userInput}
-        onChange={(e) => setUserInput(e.target.value)}
-        className={styles.textarea}
-    />
-
-                           <button
-                               type="button"
-                               disabled={loading}
-                               onClick={handleRecord}
-                               className={styles.recordButton}
-                           >
-                               {isRecording ? "⏹ Stop" : "🎤 Record"}
-                           </button>
-
-
-                           <button
-                               type="submit"
-                               disabled={loading}
-                               className={styles.generatebutton}
-                           >
-                               {loading ? (
-                                   <div className={styles.loadingwheel}>
-                                       <CircularProgress color="inherit" size={20}/>
-                                   </div>
-                               ) : (
-                                   <svg viewBox="0 0 20 20" className={styles.svgicon}
-                                        xmlns="http://www.w3.org/2000/svg">
-                                       <path
-                                           d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
-                                   </svg>
-                               )}
-                           </button>
-                       </div>
-                   </form>
-                   {isRecording && (
-                       <div style={{ marginTop: '8px', color: '#ef4444', fontWeight: '500', textAlign: 'right' }}>
-                           ⏱️ Recording: {recordTime}s
-                       </div>
-                   )}
-               </div>
-           </div>
-      </main>
-    </>
-    )
+        </>
+    );
 }
