@@ -31,6 +31,18 @@ export default function Home() {
     textAreaRef.current.focus();
   }, [messages]);
 
+  const handleInput = () => {
+    const el = textAreaRef.current;
+    if(el) {
+      el.style.height = "auto";
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    handleInput();
+  }, []);
+
   // Handle errors
   const handleError = () => {
     setMessages((prevMessages) => [...prevMessages, { "message": "Oops! There seems to be an error. Please try again.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "type": "apiMessage" }]);
@@ -135,6 +147,7 @@ export default function Home() {
           ref = {textAreaRef}
           autoFocus = {false}
           rows = {1}
+          onInput={handleInput}
           maxLength = {512}
           type="text" 
           id="userInput" 
