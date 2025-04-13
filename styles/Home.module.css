@@ -290,8 +290,8 @@
   align-self: flex-end;
   background-color: #2a2b2d;
   border-radius: 16px;
-  padding: 16px;
-  max-width: 80%; /* Increased from 50% */
+  padding: 10px 14px;
+  max-width: 50%;
   display: inline-block;
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -301,15 +301,8 @@
   align-self: flex-start;
   padding: 0;
   margin: 0;
-  max-width: 80%; /* Added max-width */
+  max-width: 100%;
   word-wrap: break-word;
-}
-
-/* Audio-specific message styling */
-.audioMessage {
-  width: 100%;
-  min-width: 200px;
-  padding: 8px 0;
 }
 
 .messagelist {
@@ -361,51 +354,4 @@
   .markdownanswer code {
     white-space: pre-wrap !important;
   }
-}
-
-
-/* Audio player styling */
-.audioPlayer {
-  max-width: 100%;
-  margin-top: 0.5rem;
-  background: #2a2b2d;
-  border-radius: 16px;
-  padding: 8px;
-}
-
-.audioPlayer::-webkit-media-controls-panel {
-  background-color: #2a2b2d;
-  border-radius: 16px;
-}
-
-.audioPlayer::-webkit-media-controls-play-button,
-.audioPlayer::-webkit-media-controls-mute-button {
-  filter: invert(0.8);
-}
-
-/* Recording indicator */
-.recordingIndicator {
-  margin-top: 8px;
-  color: #ef4444;
-  font-weight: 500;
-  text-align: right;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.recordingDot {
-  width: 8px;
-  height: 8px;
-  background-color: #ef4444;
-  border-radius: 50%;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.3; }
-  100% { opacity: 1; }
 }
