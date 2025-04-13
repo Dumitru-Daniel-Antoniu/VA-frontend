@@ -19,8 +19,11 @@ export default function Home() {
 
   const messageListRef = useRef(null);
   const textAreaRef = useRef(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordTime, setRecordTime] = useState(0);
 
-  // Auto scroll chat to bottom
+
+    // Auto scroll chat to bottom
   useEffect(() => {
     const messageList = messageListRef.current;
     messageList.scrollTop = messageList.scrollHeight;
@@ -107,7 +110,49 @@ export default function Home() {
     }
     }, [messages])
 
-  return (
+    let mediaRecorderRef = useRef(null);
+    let recordInterval = useRef(null);
+
+    const handleRecord = async () => {
+        if (isRecording) {
+            // Stop recording
+            mediaRecorderRef.current?.stop();
+            clearInterval(recordInterval.current);
+            setIsRecording(false);
+            setRecordTime(0);
+            return;
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
+            mediaRecorderRef.current = mediaRecorder;
+            mediaRecorder.start();
+
+            const audioChunks = [];
+            mediaRecorder.addEventListener("dataavailable", event => {
+                audioChunks.push(event.data);
+            });
+
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                console.log("Audio recording complete:", audioBlob);
+                // You could send audioBlob to an API or store locally
+            });
+
+            // Start timer
+            setIsRecording(true);
+            setRecordTime(0);
+            recordInterval.current = setInterval(() => {
+                setRecordTime(prev => prev + 1);
+            }, 1000);
+
+        } catch (error) {
+            console.error("Microphone access error:", error);
+            setIsRecording(false);
+        }
+    };
+    return (
     <>
       <Head>
         <title>FiiHelp</title>
@@ -138,40 +183,63 @@ export default function Home() {
         </div>
             </div>
            <div className={styles.center}>
-            
-            <div className = {styles.cloudform}>
-           <form onSubmit = {handleSubmit} className = {styles.inputArea}>
-          <textarea 
-          disabled = {loading}
-          onKeyDown={handleEnter}
-          ref = {textAreaRef}
-          autoFocus = {false}
-          rows = {1}
-          onInput={handleInput}
-          maxLength = {512}
-          type="text" 
-          id="userInput" 
-          name="userInput" 
-          placeholder = {loading? "Waiting for response..." : "Type your question..."}  
-          value = {userInput} 
-          onChange = {e => setUserInput(e.target.value)} 
-          className = {styles.textarea}
-          />
-            <button 
-            type = "submit" 
-            disabled = {loading}
-            className = {styles.generatebutton}
-            >
-            {loading ? <div className = {styles.loadingwheel}><CircularProgress color="inherit" size = {20}/> </div> : 
-            // Send icon SVG in input field
-            <svg viewBox='0 0 20 20' className={styles.svgicon} xmlns='http://www.w3.org/2000/svg'>
-            <path d='M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z'></path>
-          </svg>}
-            </button>
-            </form>
-            </div>
-        </div>
+
+               <div className={styles.cloudform}>
+                   <form onSubmit={handleSubmit} className={styles.inputArea}>
+                       <div className={styles.inputWrap}>
+    <textarea
+        disabled={loading}
+        onKeyDown={handleEnter}
+        ref={textAreaRef}
+        rows={1}
+        onInput={handleInput}
+        maxLength={512}
+        type="text"
+        id="userInput"
+        name="userInput"
+        placeholder={loading ? "Waiting for response..." : "Type your question..."}
+        value={userInput}
+        onChange={(e) => setUserInput(e.target.value)}
+        className={styles.textarea}
+    />
+
+                           <button
+                               type="button"
+                               disabled={loading}
+                               onClick={handleRecord}
+                               className={styles.recordButton}
+                           >
+                               {isRecording ? "⏹ Stop" : "🎤 Record"}
+                           </button>
+
+
+                           <button
+                               type="submit"
+                               disabled={loading}
+                               className={styles.generatebutton}
+                           >
+                               {loading ? (
+                                   <div className={styles.loadingwheel}>
+                                       <CircularProgress color="inherit" size={20}/>
+                                   </div>
+                               ) : (
+                                   <svg viewBox="0 0 20 20" className={styles.svgicon}
+                                        xmlns="http://www.w3.org/2000/svg">
+                                       <path
+                                           d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                                   </svg>
+                               )}
+                           </button>
+                       </div>
+                   </form>
+                   {isRecording && (
+                       <div style={{ marginTop: '8px', color: '#ef4444', fontWeight: '500', textAlign: 'right' }}>
+                           ⏱️ Recording: {recordTime}s
+                       </div>
+                   )}
+               </div>
+           </div>
       </main>
     </>
-  )
+    )
 }
