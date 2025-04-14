@@ -12,12 +12,16 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 
 body {
   color: snow;
   background: #070809;
+  display: flex;
+  flex-direction: column;
 }
 
 a {

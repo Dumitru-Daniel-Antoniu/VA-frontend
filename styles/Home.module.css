@@ -1,10 +1,16 @@
 /* === GENERAL LAYOUT === */
+/* :root {
+  --side-padding: 2rem 0;
+} */
+
 .main {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 2rem;
+  padding: 0 1rem;
+  margin: 0 auto;
   height: 100vh;
   overflow: hidden;
   background-color: var(--bg);
@@ -16,20 +22,22 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 2rem 0;
+  padding-bottom: 15px;
+  padding-top: 10px;
   flex-direction: column;
 }
 
 .cloud {
-  width: 75vw;
+  width: 100vw;
   height: 65vh;
   background: var(--bg);
   box-shadow: none;
   padding: 0;
+  padding-top: 4.5rem;
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
   justify-content: center;
   align-items: center;
 }
@@ -50,8 +58,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  font-size: 1.5rem;
   background: var(--input-bg);
   border-bottom: 1px solid #1f2227;
+  position: fixed;
+  width: 100vw;
 }
 
 .theme-toggle {
@@ -59,7 +70,8 @@
   display: inline-block;
   width: 60px;
   height: 30px;
-  margin-left: 1rem;
+  margin-left: 10rem;
+  margin-top: -3.2rem;
 }
 
 .theme-toggle input {
@@ -95,8 +107,6 @@
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   z-index: 0;
 }
-
-
 
 .icon {
   z-index: 2;
@@ -195,7 +205,7 @@
   outline: none;
   transition: height 0.2s ease-in-out;
   max-height: 160px;
-  min-height: 40px;
+  min-height: 0px;
 }
 
 .textarea:disabled {
@@ -277,11 +287,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 35px;
   border-radius: 0.5rem;
-  padding-bottom: 2rem;
+  padding-top: 4.5rem;
   padding-right: 1rem;
   scrollbar-gutter: stable;
+  padding: 0 12.5vw;
 }
 
 .messagelist::-webkit-scrollbar {
@@ -338,7 +349,7 @@
 }
 
 .markdownanswer a {
-  color: #16bed7;
+  color: var(--text);
   font-weight: 500;
 }
 
@@ -347,7 +358,7 @@
 }
 
 .markdownanswer code {
-  color: #15cb19;
+  color: var(--text);
   font-weight: 500;
   white-space: pre-wrap !important;
 }
@@ -418,7 +429,7 @@
   --bg: #070809;
   --text: #ECECF1;
   --input-bg: #2a2b2d;
-  --bubble-bg: #141619;
+  --bubble-bg: #2a2b2d;
   --button-bg: #2a2b2d;
 }
 

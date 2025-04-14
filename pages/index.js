@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Image from 'next/image'
@@ -9,12 +9,7 @@ export default function Home() {
     const [userInput, setUserInput] = useState("");
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [messages, setMessages] = useState([
-        {
-            "message": "Hi there! How can I help?",
-            "type": "apiMessage"
-        }
-    ]);
+    const [messages, setMessages] = useState([]);
 
     const messageListRef = useRef(null);
     const textAreaRef = useRef(null);
@@ -36,21 +31,31 @@ export default function Home() {
         textAreaRef.current.focus();
     }, [messages]);
 
+    useEffect(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, [messages]);
+
     const handleInput = () => {
         const el = textAreaRef.current;
         if (el) {
             el.style.height = "auto";
             el.style.height = `${el.scrollHeight}px`;
+            el.scrollTop = el.scrollHeight;
         }
     };
 
     useEffect(() => {
         handleInput();
+
+        window.addEventListener("resize", handleInput);
+        return () => {
+            window.removeEventListener("resize", handleInput);
+        };
     }, []);
 
     const handleError = () => {
         setMessages((prevMessages) => [...prevMessages, {
-            "message": "Oops! There seems to be an error. Please try again.fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "message": "Oops! There seems to be an error. Please try again.",
             "type": "apiMessage"
         }]);
         setLoading(false);
@@ -86,6 +91,12 @@ export default function Home() {
         }
 
         setUserInput("");
+        const el = textAreaRef.current;
+        if (el) {
+            el.style.height = "auto";
+            el.rows = 1;
+        }
+
         const data = await response.json();
 
         if (data.result.error === "Unauthorized") {
