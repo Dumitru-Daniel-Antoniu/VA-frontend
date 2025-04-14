@@ -422,23 +422,12 @@
   --button-bg: #d4d4d0;
 }
 
-.userBubble {
-  align-self: flex-end;
-  background-color: #2a2b2d;
-  border-radius: 16px;
-  padding: 16px;
-  max-width: 80%; /* Increased from 50% */
-  display: inline-block;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-}
-
-.botText {
-  align-self: flex-start;
-  padding: 0;
-  margin: 0;
-  max-width: 80%; /* Added max-width */
-  word-wrap: break-word;
+.dark {
+  --bg: #070809;
+  --text: #ECECF1;
+  --input-bg: #2a2b2d;
+  --bubble-bg: #2a2b2d;
+  --button-bg: #2a2b2d;
 }
 
 /* Audio-specific message styling */
@@ -446,14 +435,6 @@
   width: 100%;
   min-width: 200px;
   padding: 8px 0;
-}
-
-.dark {
-  --bg: #070809;
-  --text: #ECECF1;
-  --input-bg: #2a2b2d;
-  --bubble-bg: #2a2b2d;
-  --button-bg: #2a2b2d;
 }
 
 .light .recordButton,
