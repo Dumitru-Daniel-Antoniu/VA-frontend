@@ -199,9 +199,12 @@ export default function Home() {
       </Head>
       <div className={isDarkMode ? styles.dark : styles.light}>
         <div className={styles.topnav}>
-          <div className = {styles.navlogo}>
-            <a href="/">FiiHelp</a>
-          </div>
+            <div className={styles.navlogo}>
+                <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Image src="/logo.png" alt="UAIC Logo" width={48} height={48} />
+                    <span>FiiHelp</span>
+                </a>
+            </div>
           <div className = {styles.navlinks}>
             <label className={styles["theme-toggle"]}>
                               <input
