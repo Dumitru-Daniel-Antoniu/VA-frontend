@@ -5,6 +5,40 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import CircularProgress from '@mui/material/CircularProgress';
 
+const KEYWORD_URLS = [
+  { phrase: "Orar", url: "https://edu.info.uaic.ro/orar/" },
+  { phrase: "Webmail", url: "https://webmail.info.uaic.ro/" },
+  { phrase: "Edu Resources", url: "https://edu.info.uaic.ro/" },
+  { phrase: "Noutati", url: "https://www.info.uaic.ro/noutati/" },
+  { phrase: "Contact", url: "https://www.info.uaic.ro/contact/" },
+  { phrase: "Admitere", url: "https://www.info.uaic.ro/admitere/" },
+  { phrase: "Burse", url: "https://www.uaic.ro/studenti/burse/" },
+  { phrase: "Cazare", url: "https://www.uaic.ro/studenti/cazare/" },
+  { phrase: "Cantine", url: "https://www.uaic.ro/studenti/cantinele-universitatii-alexandru-ioan-cuza/" },
+  { phrase: "Taxe", url: "https://plati-taxe.uaic.ro/" },
+  { phrase: "Facilitati", url: "https://www.info.uaic.ro/facilitati/" },
+  { phrase: "Admitere studii de licenta", url: "https://www.info.uaic.ro/admitere-studii-de-licenta/" },
+  { phrase: "Admitere studii de master", url: "https://www.info.uaic.ro/admitere-studii-de-master/" },
+  { phrase: "Programe de studii de licenta", url: "https://www.info.uaic.ro/programs/informatica-ro-en/" },
+  { phrase: "Programe de studii de master", url: "https://www.info.uaic.ro/studii-de-master/" },
+  { phrase: "Scoala doctorala", url: "https://scdoc.info.uaic.ro/" },
+  { phrase: "Personal Academic", url: "https://www.info.uaic.ro/personal-academic/" },
+  { phrase: "Personal Asociat", url: "https://www.info.uaic.ro/personal-asociat/" },
+  { phrase: "Conducere", url: "https://www.info.uaic.ro/conducere/" },
+  { phrase: "Personal tehnic si administrativ", url: "https://www.info.uaic.ro/personal-tehnic-administrativ/" },
+  { phrase: "Emeriti", url: "https://www.info.uaic.ro/emeriti/" },
+  { phrase: "Cercetare la Fii", url: "https://www.info.uaic.ro/cercetare/" },
+  { phrase: "Activitatea de cercetare a studenţilor Facultăţii de Informatică", url: "https://www.info.uaic.ro/activitate-cercetare-studenti/" },
+  { phrase: "Ghidul studentului uaic", url: "https://www.uaic.ro/studenti/ghidul-studentului-uaic/" },
+  { phrase: "Documente si formulare pentru studenti", url: "https://www.info.uaic.ro/documente-formulare-studenti/" },
+  { phrase: "Regulamente", url: "https://www.info.uaic.ro/regulamente/" },
+  { phrase: "Practica anul 3", url: "https://www.info.uaic.ro/practica-anul-iii/" },
+  { phrase: "Absolvire", url: "https://absolvire.info.uaic.ro/" },
+  { phrase: "Serviciul pentru Studenți, Orientare în Carieră și Inserție Profesională și Alumni", url: "https://www.uaic.ro/studenti/cariera/" },
+  { phrase: "Reprezentarea studenţilor în structurile administrative și de conducere", url: "https://www.uaic.ro/studenti/reprezentarea-studentilor-structurile-de-conducere-2/" }
+];
+
+
 export default function Home() {
     const [userInput, setUserInput] = useState("");
     const [history, setHistory] = useState([]);
@@ -108,6 +142,22 @@ export default function Home() {
         setLoading(false);
     };
 
+    const processKeywords = (text) => {
+        const sortedKeywords = [...KEYWORD_URLS].sort((a, b) => b.phrase.length - a.phrase.length);
+        
+        let processedText = text;
+        
+        sortedKeywords.forEach(({ phrase, url }) => {
+          const regex = new RegExp(`\\b${phrase}\\b`, 'gi');
+          processedText = processedText.replace(
+            regex,
+            `[${phrase}](${url})`
+          );
+        });
+        
+        return processedText;
+      };
+
     const handleEnter = (e) => {
         if (e.key === "Enter" && userInput) {
             if (!e.shiftKey && userInput) {
@@ -209,10 +259,20 @@ export default function Home() {
                                             : styles.userBubble
                                     }
                                 >
-                                    <div className={styles.markdownanswer}>
-                                        <ReactMarkdown linkTarget="_blank">
-                                            {message.message}
-                                        </ReactMarkdown>
+                                <div className={styles.markdownanswer}>
+                                      <ReactMarkdown
+                                          linkTarget="_blank"
+                                          components={{
+                                              a: ({node, ...props}) => (
+                                                  <a {...props} style={{
+                                                      color: '#0066cc',
+                                                      textDecoration: 'underline'
+                                                  }} />
+                                              )
+                                          }}
+                                      >
+                                          {processKeywords(message.message)}
+                                      </ReactMarkdown>
                                     </div>
                                 </div>
                             ))}
